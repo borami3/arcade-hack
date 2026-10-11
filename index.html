@@ -287,13 +287,10 @@ async function boot() {
     fetch('demo_data.json').then(r=>r.json()).catch(()=>null),
   ]);
 
-  // Seed demo: first 3 bridesmaids "done", Litzy "pending" — only on first visit
-  if (!localStorage.getItem('mwm_seeded')) {
-    const bms = allBms();
-    const doneIds = bms.filter(b=>b.id!=='litzy').map(b=>b.id);
-    localStorage.setItem('mwm_submitted', JSON.stringify(doneIds));
-    localStorage.setItem('mwm_seeded', '1');
-  }
+  // Always seed on load: Breanna/Sarah/Tinuke done, Litzy pending
+  const bms = allBms();
+  const doneIds = bms.filter(b=>b.id!=='litzy').map(b=>b.id);
+  localStorage.setItem('mwm_submitted', JSON.stringify(doneIds));
 
   renderWedding();
   const rn = document.getElementById('reveal-wedding-name');
@@ -609,7 +606,6 @@ function toast(msg) {
 // ── Demo reset ────────────────────────────────────────────────────────────────
 function resetDemo() {
   localStorage.removeItem('mwm_submitted');
-  localStorage.removeItem('mwm_seeded');
   for (const k of Object.keys(uploadedPhotos)) delete uploadedPhotos[k];
   cameFromDeepLink = false;
   history.replaceState(null, '', location.pathname);
