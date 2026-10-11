@@ -60,7 +60,7 @@
     {
       "id": "litzy",
       "name": "Litzy",
-      "photo": "friends/litzy.jpeg",
+      "photo": "",
       "style_images": [],
       "style_tags": [
         "Minimalist",
@@ -74,7 +74,7 @@
       "metal_pref": "gold",
       "size_pref": "dainty",
       "vibe": "minimal",
-      "outfit_photo": "friends/litzy.jpeg"
+      "outfit_photo": ""
     },
     {
       "id": "sarah",

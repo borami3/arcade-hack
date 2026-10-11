@@ -60,6 +60,7 @@ body {
 .sw { width:26px; height:26px; border-radius:50%; border:2px solid var(--paper); box-shadow:0 0 0 1px var(--line); }
 .btn-sage { width:100%; padding:14px; border:none; border-radius:12px; background:var(--sage); color:#fff; font:600 15px var(--sans); cursor:pointer; transition:background .15s; display:flex; align-items:center; justify-content:center; gap:6px; }
 .btn-sage:hover { background:var(--olive); }
+.btn-sage:disabled { background:#b0bfaa; cursor:not-allowed; }
 .btn-outline { width:100%; padding:11px; border:1.5px solid var(--line); border-radius:10px; background:transparent; color:var(--ink); font:500 13px var(--sans); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:background .15s; }
 .btn-outline:hover { background:var(--line); }
 .btn-gold { width:100%; padding:13px; border:none; border-radius:10px; background:linear-gradient(135deg,var(--olive) 0%,#7a6020 100%); color:#fff; font:600 14px var(--sans); cursor:pointer; margin-bottom:8px; transition:opacity .15s; }
@@ -104,10 +105,15 @@ body {
 .style-portrait { width:100%; height:200px; object-fit:cover; object-position:top; background:var(--sage-lt); border-radius:14px; margin-bottom:14px; display:block; }
 .photo-zone { position:relative; width:100%; height:200px; border-radius:14px; overflow:hidden; cursor:pointer; background:var(--sage-lt); margin-bottom:14px; }
 .photo-zone .style-portrait { margin-bottom:0; border-radius:0; height:100%; }
-.photo-zone:hover .upload-hint { background:linear-gradient(transparent,rgba(0,0,0,.65)); }
-.upload-hint { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent,rgba(0,0,0,.48)); color:#fff; display:flex; align-items:center; justify-content:center; gap:6px; padding:20px 12px 12px; font-size:12px; font-weight:500; pointer-events:none; transition:background .15s; }
-.upload-hint svg { opacity:.9; }
+.photo-zone:hover .upload-hint { opacity:.9; }
+/* filled state: slim gradient bar at bottom */
+.upload-hint { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent,rgba(0,0,0,.52)); color:#fff; display:flex; align-items:center; justify-content:center; gap:6px; padding:24px 12px 12px; font-size:12px; font-weight:500; pointer-events:none; transition:opacity .15s; }
+.upload-hint svg { opacity:.85; }
 .upload-hint.hidden { display:none; }
+/* empty state: big centered placeholder */
+.photo-zone.empty { background:linear-gradient(135deg,#b8d4a8 0%,var(--sage-lt) 100%); }
+.photo-zone.empty .upload-hint { top:0; padding:0; flex-direction:column; gap:10px; font-size:14px; background:none; }
+.photo-zone.empty .upload-hint svg { width:32px; height:32px; opacity:.6; }
 .photo-zone.drag-over { outline:2px dashed var(--gold); outline-offset:-4px; }
 .style-name { font-family:var(--serif); font-size:28px; font-weight:500; margin-bottom:2px; }
 .style-tags { font-size:12px; color:var(--muted); margin-bottom:16px; }
@@ -151,6 +157,15 @@ body {
 .group-total-block.in { opacity:1; transform:none; }
 .gt-label  { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; }
 .gt-amount { font-family:var(--serif); font-size:30px; font-weight:500; margin:2px 0 12px; }
+
+/* Share sheet */
+.share-modal { position:absolute; inset:0; background:rgba(0,0,0,.4); z-index:50; display:flex; align-items:flex-end; padding:16px; border-radius:40px; }
+.share-sheet { background:var(--paper); border-radius:20px; padding:20px 16px 16px; width:100%; }
+.share-sheet h4 { font-family:var(--serif); font-size:22px; font-weight:500; margin-bottom:2px; }
+.share-sheet p  { font-size:12px; color:var(--muted); margin-bottom:12px; }
+.share-url-box  { background:#f0ebe0; border-radius:8px; padding:9px 11px; font-size:11px; font-family:monospace; color:var(--ink); word-break:break-all; line-height:1.5; margin-bottom:12px; border:1px solid var(--line); }
+.share-sheet .btn-sage { margin-bottom:8px; }
+.share-sheet .btn-outline { margin-bottom:6px; }
 
 /* Toast */
 .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(60px); background:var(--ink); color:#fff; font-size:13px; padding:10px 20px; border-radius:99px; opacity:0; transition:all .3s; pointer-events:none; white-space:nowrap; z-index:100; }
@@ -246,6 +261,7 @@ body {
 </div><!-- /phone -->
 
 <div class="caption">Arcade Hackathon · Match Without Matching</div>
+<button onclick="resetDemo()" style="background:none;border:none;font-size:11px;color:#a0937e;cursor:pointer;margin-top:2px;font-family:var(--sans);letter-spacing:.04em;">↺ Reset demo</button>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -260,6 +276,7 @@ const CAT_EMOJI = {'Dangle Earrings':'💎','Stud Earrings':'⭕','Pendant Neckl
 // ── Data ─────────────────────────────────────────────────────────────────────
 let PROD = null, DEMO = null;
 const uploadedPhotos = {};  // bmId → dataURL from file picker
+let cameFromDeepLink = false;
 
 async function boot() {
   const params = new URLSearchParams(location.search);
@@ -284,6 +301,7 @@ async function boot() {
 
   // Deep-link: bridesmaid tapped their share link
   if (targetBm) {
+    cameFromDeepLink = true;
     goStyle(targetBm);
   }
 }
@@ -352,10 +370,12 @@ function renderWedding() {
          <button class="share-pill" onclick="event.stopPropagation();shareBm('${esc(bm.id)}','${esc(bm.name)}')">Share link</button>`;
 
     const avSrc = uploadedPhotos[bm.id] || bm.photo || bm.outfit_photo || '';
+    const avEl = avSrc
+      ? `<img class="party-av" src="${esc(avSrc)}" alt="${esc(bm.name)}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'party-av',style:'background:var(--sage-lt);display:flex;align-items:center;justify-content:center;font-size:16px;font-family:var(--serif)',textContent:'${esc(bm.name[0])}'}))">`
+      : `<div class="party-av" style="background:var(--sage-lt);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:18px;color:#fff">${esc(bm.name[0])}</div>`;
     return `
     <div class="party-row" onclick="goStyle('${esc(bm.id)}')">
-      <img class="party-av" src="${esc(avSrc)}" alt="${esc(bm.name)}"
-           onerror="this.src='';this.style.background='#9caf88'">
+      ${avEl}
       <div class="party-info">
         <div class="party-name">${esc(bm.name)}</div>
         <div class="party-tags">${(bm.style_tags||[]).join(' · ')}</div>
@@ -377,12 +397,14 @@ function renderStyleForm(bmId) {
   const dm  = ((DEMO?.bridesmaids||[]).find(b=>b?.id===bmId))||{};
   const data = {...dm,...bm};
 
-  const hasPreload = !!(data.photo||data.outfit_photo);
+  const hasPreload = !!(data.photo||data.outfit_photo||uploadedPhotos[bmId]);
+  const preloadSrc = uploadedPhotos[bmId] || data.photo || data.outfit_photo || '';
   document.getElementById('style-body').innerHTML = `
-    <div class="photo-zone" id="photo-zone" onclick="document.getElementById('photo-file-input').click()">
+    <div class="photo-zone${hasPreload?'':' empty'}" id="photo-zone" onclick="document.getElementById('photo-file-input').click()">
       <img class="style-portrait" id="style-portrait-img"
-           src="${esc(data.photo||data.outfit_photo||'')}" alt="${esc(data.name)}"
-           onerror="this.src='';this.style.background='var(--sage-lt)'">
+           src="${esc(preloadSrc)}" alt="${esc(data.name)}"
+           style="${hasPreload?'':'display:none'}"
+           onerror="this.src='';this.style.display='none';document.getElementById('photo-zone').classList.add('empty');document.getElementById('upload-hint').classList.remove('hidden')">
       <div class="upload-hint${hasPreload?' hidden':''}" id="upload-hint">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
         Add your outfit photo
@@ -407,7 +429,8 @@ function renderStyleForm(bmId) {
       <label class="form-label">Your vibe in one word</label>
       <input class="vibe-input" id="vibe-input" value="${esc(data.vibe||'')}" placeholder="e.g. romantic, bold, minimal…">
     </div>
-    <button class="btn-sage" onclick="saveStyle()">Save my style ✓</button>`;
+    <button class="btn-sage" id="btn-save-style" onclick="saveStyle()"
+      ${hasPreload?'':'disabled'}>Save my style ✓</button>`;
 }
 
 function previewPhoto(input) {
@@ -417,8 +440,12 @@ function previewPhoto(input) {
   reader.onload = e => {
     const img  = document.getElementById('style-portrait-img');
     const hint = document.getElementById('upload-hint');
-    if (img)  { img.src = e.target.result; img.style.background = ''; }
-    if (hint) hint.classList.add('hidden');
+    const zone = document.getElementById('photo-zone');
+    const saveBtn = document.getElementById('btn-save-style');
+    if (img)     { img.src = e.target.result; img.style.display = ''; }
+    if (hint)    hint.classList.add('hidden');
+    if (zone)    zone.classList.remove('empty');
+    if (saveBtn) saveBtn.disabled = false;
     if (currentBmId) uploadedPhotos[currentBmId] = e.target.result;
   };
   reader.readAsDataURL(file);
@@ -447,9 +474,12 @@ function pick(btn, groupId) {
 
 function saveStyle() {
   if (currentBmId) markSubmitted(currentBmId);
-  // Remove deep-link param so refresh goes to wedding screen
   history.replaceState(null,'',location.pathname);
-  goWedding();
+  if (cameFromDeepLink) {
+    goReveal();  // Litzy sees her piece right after saving
+  } else {
+    goWedding();
+  }
 }
 
 // ── Screen 3: Reveal ──────────────────────────────────────────────────────────
@@ -526,25 +556,47 @@ function shareBm(bmId, bmName) {
   const url = `${location.origin}${location.pathname}?bridesmaid=${encodeURIComponent(bmId)}`;
   if (navigator.share) {
     navigator.share({
-      title: `Add your style — Grace & Daniel's Bridal Party`,
-      text: `Hey ${bmName}! Add your style for the wedding jewelry 💍`,
+      title:`Add your style — ${(PROD||DEMO)?.wedding||'Bolu & Jacob'}'s Bridal Party`,
+      text:`Hey ${bmName}! Add your style for the wedding jewelry 💍`,
       url,
-    }).catch(()=>copyLink(url));
-  } else { copyLink(url); }
+    }).catch(()=>showShareSheet(bmId, bmName, url));
+  } else {
+    showShareSheet(bmId, bmName, url);
+  }
 }
+
+function showShareSheet(bmId, bmName, url) {
+  const existing = document.getElementById('share-modal');
+  if (existing) existing.remove();
+  const modal = document.createElement('div');
+  modal.id = 'share-modal';
+  modal.className = 'share-modal';
+  modal.innerHTML = `
+    <div class="share-sheet">
+      <h4>Share with ${esc(bmName)}</h4>
+      <p>Drop this link in your group chat ✨</p>
+      <div class="share-url-box">${esc(url)}</div>
+      <button class="btn-sage" onclick="navigator.clipboard&&navigator.clipboard.writeText(${JSON.stringify(url)}).then(()=>{toast('Link copied!');document.getElementById('share-modal').remove()})">
+        Copy link
+      </button>
+      <button class="btn-outline" onclick="location.href=${JSON.stringify(url)}">
+        Open as ${esc(bmName)} →
+      </button>
+      <button class="btn-outline" style="color:var(--muted)" onclick="document.getElementById('share-modal').remove()">
+        Cancel
+      </button>
+    </div>`;
+  modal.addEventListener('click', e => { if (e.target===modal) modal.remove(); });
+  document.querySelector('.screen-wrap').appendChild(modal);
+}
+
 function shareAll() {
   const bms = allBms();
   const pending = bms.filter(b=>!isSubmitted(b.id));
   if (!pending.length) { toast('All styles added! Head to Reveal ✨'); return; }
-  const url = `${location.origin}${location.pathname}?bridesmaid=${encodeURIComponent(pending[0].id)}`;
-  copyLink(url, `${pending[0].name}'s link copied!`);
-}
-function copyLink(url, msg) {
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(url).then(()=>toast(msg||'Link copied!'));
-  } else {
-    prompt('Copy this link:', url);
-  }
+  const bm = pending[0];
+  const url = `${location.origin}${location.pathname}?bridesmaid=${encodeURIComponent(bm.id)}`;
+  showShareSheet(bm.id, bm.name, url);
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
@@ -552,6 +604,17 @@ function toast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg; el.classList.add('show');
   setTimeout(()=>el.classList.remove('show'), 2400);
+}
+
+// ── Demo reset ────────────────────────────────────────────────────────────────
+function resetDemo() {
+  localStorage.removeItem('mwm_submitted');
+  localStorage.removeItem('mwm_seeded');
+  for (const k of Object.keys(uploadedPhotos)) delete uploadedPhotos[k];
+  cameFromDeepLink = false;
+  history.replaceState(null, '', location.pathname);
+  boot();
+  goWedding();
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
