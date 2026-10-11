@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Match Without Matching</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:  #FAF6EE; --paper:  #FFFDF8; --line:   #E6DFCF;
+  --sage:   #4a7c59; --sage-lt:#9CAF88; --olive:  #6B7A4B;
+  --gold:   #C9A44C; --ink:    #2E3326; --muted:  #7A7A6E;
+  --serif:  "Cormorant Garamond", Georgia, serif;
+  --sans:   Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: radial-gradient(ellipse 90% 70% at 50% 0%, #d8e8c8 0%, #f0ebe0 40%, #e8dcc8 100%);
+  min-height: 100svh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 28px 16px 36px; gap: 18px;
+}
+
+.brand { text-align: center; }
+.brand h1 { font-family: var(--serif); font-weight: 500; font-size: clamp(26px,3.5vw,40px); color: var(--ink); }
+.brand p  { font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--olive); margin-top: 3px; }
+
+/* Phone shell */
+.phone {
+  width: 390px; height: min(780px, calc(100svh - 170px));
+  background: #1c1c1e; border-radius: 50px; padding: 12px; flex-shrink: 0;
+  box-shadow: 0 0 0 1px #3a3a3c, 0 0 0 2.5px #2a2a2c,
+              0 40px 80px rgba(0,0,0,.4), 0 10px 24px rgba(0,0,0,.22),
+              inset 0 1px 0 rgba(255,255,255,.1);
+  position: relative;
+}
+.phone::before { content:''; position:absolute; right:-4px; top:130px; width:4px; height:70px; background:#3a3a3c; border-radius:0 2px 2px 0; box-shadow:0 90px 0 #3a3a3c; }
+.phone::after  { content:''; position:absolute; left:-4px; top:110px; width:4px; height:44px; background:#3a3a3c; border-radius:2px 0 0 2px; box-shadow:0 60px 0 #3a3a3c,0 112px 0 #3a3a3c; }
+.island { position:absolute; top:18px; left:50%; transform:translateX(-50%); width:120px; height:34px; background:#1c1c1e; border-radius:20px; z-index:20; pointer-events:none; }
+
+.screen-wrap { width:100%; height:100%; background:var(--cream); border-radius:40px; overflow:hidden; display:flex; flex-direction:column; position:relative; }
+.statusbar { background:var(--sage); color:#fff; font-size:12px; font-weight:600; padding:14px 22px 6px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+
+.page { display:none; flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+.page::-webkit-scrollbar { display:none; }
+.page.active { display:flex; flex-direction:column; }
+
+.page-nav { padding:12px 16px 0; flex-shrink:0; }
+.back-link { font-size:13px; font-weight:500; color:var(--sage); background:none; border:none; cursor:pointer; padding:0; font-family:var(--sans); display:inline-flex; align-items:center; gap:4px; }
+
+/* ── Shared components ── */
+.section-eyebrow { font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+.chip { font-size:11px; padding:2px 8px; border-radius:99px; background:#EEF1E6; color:var(--olive); }
+.chip.gold { background:#F5ECD6; color:#7A6020; }
+.chips { display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
+.swatches { display:flex; gap:6px; margin-top:10px; }
+.sw { width:26px; height:26px; border-radius:50%; border:2px solid var(--paper); box-shadow:0 0 0 1px var(--line); }
+.btn-sage { width:100%; padding:14px; border:none; border-radius:12px; background:var(--sage); color:#fff; font:600 15px var(--sans); cursor:pointer; transition:background .15s; display:flex; align-items:center; justify-content:center; gap:6px; }
+.btn-sage:hover { background:var(--olive); }
+.btn-outline { width:100%; padding:11px; border:1.5px solid var(--line); border-radius:10px; background:transparent; color:var(--ink); font:500 13px var(--sans); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:background .15s; }
+.btn-outline:hover { background:var(--line); }
+.btn-gold { width:100%; padding:13px; border:none; border-radius:10px; background:linear-gradient(135deg,var(--olive) 0%,#7a6020 100%); color:#fff; font:600 14px var(--sans); cursor:pointer; margin-bottom:8px; transition:opacity .15s; }
+
+/* ════════════════════════════
+   PAGE 1 — BRIDE / WEDDING
+════════════════════════════ */
+.wedding-header { background:var(--sage); color:#fff; padding:10px 18px 18px; flex-shrink:0; }
+.w-eyebrow { font-size:10px; letter-spacing:.16em; text-transform:uppercase; opacity:.7; margin-bottom:2px; }
+.w-title   { font-family:var(--serif); font-size:28px; font-weight:500; line-height:1.05; }
+.w-date    { font-size:12px; opacity:.75; margin-top:3px; }
+
+.theme-card { background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:14px; }
+.theme-name { font-family:var(--serif); font-size:22px; font-weight:500; margin-bottom:6px; }
+.theme-desc { font-size:12px; color:var(--muted); line-height:1.6; }
+.pinterest-link { display:inline-flex; align-items:center; gap:5px; font-size:12px; color:#E60023; text-decoration:none; margin-top:10px; font-weight:500; }
+.pinterest-link:hover { text-decoration:underline; }
+
+/* Party rows */
+.party-row { background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:10px 12px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:box-shadow .15s; }
+.party-row:hover { box-shadow:0 2px 8px rgba(46,51,38,.1); }
+.party-av { width:40px; height:40px; border-radius:50%; object-fit:cover; flex-shrink:0; background:var(--sage-lt); }
+.party-info { flex:1; min-width:0; }
+.party-name { font-family:var(--serif); font-size:17px; font-weight:500; }
+.party-tags { font-size:11px; color:var(--muted); margin-top:1px; }
+.party-right { display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; }
+.badge-done { font-size:11px; font-weight:600; color:var(--sage); }
+.badge-pending { font-size:11px; font-weight:600; color:var(--muted); }
+.piece-thumb { width:36px; height:36px; border-radius:6px; object-fit:cover; background:#f0ebe0; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; overflow:hidden; }
+.piece-thumb img { width:100%; height:100%; object-fit:cover; }
+.share-pill { font-size:10px; font-weight:600; color:var(--sage); background:#EEF1E6; border:none; border-radius:99px; padding:3px 8px; cursor:pointer; white-space:nowrap; font-family:var(--sans); transition:background .12s; }
+.share-pill:hover { background:#dde8d2; }
+
+/* Share-party CTA */
+.share-party-row { padding:12px 16px 0; display:flex; gap:8px; }
+.share-party-row button { flex:1; }
+
+/* ════════════════════════════
+   PAGE 2 — BRIDESMAID STYLE
+════════════════════════════ */
+.style-body { flex:1; padding:0 16px 24px; }
+.style-portrait { width:100%; height:200px; object-fit:cover; object-position:top; background:var(--sage-lt); border-radius:14px; margin-bottom:14px; display:block; }
+.photo-zone { position:relative; width:100%; height:200px; border-radius:14px; overflow:hidden; cursor:pointer; background:var(--sage-lt); margin-bottom:14px; }
+.photo-zone .style-portrait { margin-bottom:0; border-radius:0; height:100%; }
+.photo-zone:hover .upload-hint { background:linear-gradient(transparent,rgba(0,0,0,.65)); }
+.upload-hint { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent,rgba(0,0,0,.48)); color:#fff; display:flex; align-items:center; justify-content:center; gap:6px; padding:20px 12px 12px; font-size:12px; font-weight:500; pointer-events:none; transition:background .15s; }
+.upload-hint svg { opacity:.9; }
+.upload-hint.hidden { display:none; }
+.photo-zone.drag-over { outline:2px dashed var(--gold); outline-offset:-4px; }
+.style-name { font-family:var(--serif); font-size:28px; font-weight:500; margin-bottom:2px; }
+.style-tags { font-size:12px; color:var(--muted); margin-bottom:16px; }
+.form-group { margin-bottom:18px; }
+.form-label { font-size:12px; font-weight:600; color:var(--ink); margin-bottom:8px; display:block; }
+.choices { display:flex; gap:8px; flex-wrap:wrap; }
+.choice { padding:8px 16px; border-radius:99px; border:1.5px solid var(--line); background:var(--paper); font:500 13px var(--sans); color:var(--muted); cursor:pointer; transition:all .15s; }
+.choice.on { border-color:var(--sage); background:var(--sage); color:#fff; }
+.vibe-input { width:100%; padding:9px 12px; border:1.5px solid var(--line); border-radius:10px; font:500 14px var(--sans); color:var(--ink); background:var(--paper); outline:none; }
+.vibe-input:focus { border-color:var(--sage); }
+
+/* ════════════════════════════
+   PAGE 3 — REVEAL
+════════════════════════════ */
+.reveal-gate { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px 24px; gap:20px; text-align:center; }
+.reveal-gate h2 { font-family:var(--serif); font-size:28px; font-weight:500; }
+.reveal-gate p  { font-family:var(--serif); font-style:italic; font-size:15px; color:var(--muted); }
+.btn-reveal { background:linear-gradient(135deg,var(--sage) 0%,var(--gold) 100%); color:#fff; border:none; border-radius:99px; padding:15px 36px; font:600 16px var(--sans); cursor:pointer; animation:glow 2.2s ease-in-out infinite; }
+@keyframes glow { 0%,100%{box-shadow:0 0 0 0 rgba(74,124,89,.4)}50%{box-shadow:0 0 0 10px rgba(74,124,89,0)} }
+
+.reveal-body { display:none; flex-direction:column; padding:0 0 24px; }
+.reveal-body.open { display:flex; }
+.reveal-heading { padding:14px 16px 10px; }
+.reveal-heading h3 { font-family:var(--serif); font-size:22px; font-weight:500; }
+.reveal-heading p  { font-size:12px; color:var(--muted); font-style:italic; }
+
+.piece-card { margin:0 16px 12px; background:var(--paper); border:1px solid var(--line); border-radius:14px; overflow:hidden; opacity:0; transform:translateY(16px); transition:opacity .45s ease,transform .45s ease; display:flex; flex-direction:column; }
+.piece-card.in { opacity:1; transform:none; }
+.card-visuals { display:grid; grid-template-columns:1fr 1fr; height:160px; flex-shrink:0; overflow:hidden; }
+.card-portrait { width:100%; height:100%; object-fit:cover; object-position:top; background:#c8dcb8; display:block; }
+.card-piece    { width:100%; height:100%; background:#f0ebe0; display:flex; align-items:center; justify-content:center; font-size:40px; overflow:hidden; }
+.card-piece img { width:100%; height:100%; object-fit:cover; display:block; }
+.card-body  { padding:11px 13px 13px; background:var(--paper); flex-shrink:0; position:relative; z-index:1; }
+.card-row   { display:flex; justify-content:space-between; align-items:baseline; }
+.card-name  { font-family:var(--serif); font-size:19px; font-weight:500; }
+.card-price { font-family:var(--serif); font-size:18px; font-weight:500; color:var(--olive); }
+.card-title { font-size:12px; color:var(--muted); margin-top:2px; }
+.card-why   { font-family:var(--serif); font-style:italic; font-size:13px; color:var(--olive); margin-top:6px; line-height:1.5; }
+
+.group-total-block { margin:4px 16px 0; background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:14px; opacity:0; transform:translateY(10px); transition:opacity .4s ease .1s,transform .4s ease .1s; }
+.group-total-block.in { opacity:1; transform:none; }
+.gt-label  { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; }
+.gt-amount { font-family:var(--serif); font-size:30px; font-weight:500; margin:2px 0 12px; }
+
+/* Toast */
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(60px); background:var(--ink); color:#fff; font-size:13px; padding:10px 20px; border-radius:99px; opacity:0; transition:all .3s; pointer-events:none; white-space:nowrap; z-index:100; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+.caption { font-size:11px; color:#a0937e; letter-spacing:.04em; text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="brand">
+  <h1>Match Without Matching</h1>
+  <p>Together, yet individual.</p>
+</div>
+
+<div class="phone">
+  <div class="island"></div>
+  <div class="screen-wrap">
+    <div class="statusbar">
+      <span>9:41</span>
+      <span>▲▲▲ WiFi ████</span>
+    </div>
+
+    <!-- ══════════════════════════════
+         PAGE 1: BRIDE / WEDDING
+    ══════════════════════════════ -->
+    <div class="page active" id="page-wedding">
+      <div class="wedding-header">
+        <div class="w-eyebrow" id="w-eyebrow">Bridal party</div>
+        <div class="w-title"   id="w-title">Loading…</div>
+        <div class="w-date"    id="w-date"></div>
+      </div>
+
+      <div style="flex:1;padding:0 0 24px">
+        <div style="margin:14px 16px 0">
+          <div class="section-eyebrow">Shared theme</div>
+          <div class="theme-card" id="theme-card"></div>
+        </div>
+
+        <div style="margin:14px 16px 0">
+          <div class="section-eyebrow">Bridal party</div>
+          <div style="display:flex;flex-direction:column;gap:8px" id="party-rows"></div>
+        </div>
+
+        <div style="padding:20px 16px 0;display:flex;flex-direction:column;gap:8px">
+          <button class="btn-sage" onclick="goReveal()">Reveal our look ✨</button>
+          <button class="btn-outline" onclick="shareAll()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share with your party
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         PAGE 2: ADD YOUR STYLE
+    ══════════════════════════════ -->
+    <div class="page" id="page-style">
+      <div class="page-nav">
+        <button class="back-link" onclick="goWedding()">‹ Wedding</button>
+      </div>
+      <div class="style-body" id="style-body"></div>
+    </div>
+
+    <!-- ══════════════════════════════
+         PAGE 3: REVEAL
+    ══════════════════════════════ -->
+    <div class="page" id="page-reveal">
+      <div class="page-nav">
+        <button class="back-link" onclick="goWedding()">‹ Wedding</button>
+      </div>
+
+      <div class="reveal-gate" id="reveal-gate">
+        <div>
+          <div class="section-eyebrow" style="color:var(--olive);margin-bottom:6px" id="reveal-wedding-name"></div>
+          <h2>Your pieces are ready ✨</h2>
+          <p>Each designed for you, inspired by the garden.</p>
+        </div>
+        <button class="btn-reveal" onclick="startReveal()">Reveal our look ✨</button>
+      </div>
+
+      <div class="reveal-body" id="reveal-body">
+        <div class="reveal-heading">
+          <h3>Your pieces ✨</h3>
+          <p>Same garden. Four stories.</p>
+        </div>
+        <div id="piece-cards"></div>
+        <div class="group-total-block" id="group-total"></div>
+      </div>
+    </div>
+
+  </div><!-- /screen-wrap -->
+</div><!-- /phone -->
+
+<div class="caption">Arcade Hackathon · Match Without Matching</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Config — paste your Pinterest URL here ───────────────────────────────────
+const PINTEREST_URL = 'https://pin.it/52OpZXN3J';
+// ─────────────────────────────────────────────────────────────────────────────
+
+const fmt = (n, cur='USD') => new Intl.NumberFormat('en-US',{style:'currency',currency:cur}).format(n);
+const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const CAT_EMOJI = {'Dangle Earrings':'💎','Stud Earrings':'⭕','Pendant Necklace':'📿','Rings':'💍'};
+
+// ── Data ─────────────────────────────────────────────────────────────────────
+let PROD = null, DEMO = null;
+const uploadedPhotos = {};  // bmId → dataURL from file picker
+
+async function boot() {
+  const params = new URLSearchParams(location.search);
+  const targetBm = params.get('bridesmaid');
+
+  [PROD, DEMO] = await Promise.all([
+    fetch('products.json').then(r=>r.json()).catch(()=>null),
+    fetch('demo_data.json').then(r=>r.json()).catch(()=>null),
+  ]);
+
+  // Seed demo: first 3 bridesmaids "done", Litzy "pending" — only on first visit
+  if (!localStorage.getItem('mwm_seeded')) {
+    const bms = allBms();
+    const doneIds = bms.filter(b=>b.id!=='litzy').map(b=>b.id);
+    localStorage.setItem('mwm_submitted', JSON.stringify(doneIds));
+    localStorage.setItem('mwm_seeded', '1');
+  }
+
+  renderWedding();
+  const rn = document.getElementById('reveal-wedding-name');
+  if (rn) rn.textContent = (PROD||DEMO)?.wedding || 'Bolu & Jacob';
+
+  // Deep-link: bridesmaid tapped their share link
+  if (targetBm) {
+    goStyle(targetBm);
+  }
+}
+
+// ── Submitted state (localStorage) ───────────────────────────────────────────
+function getSubmitted()   { return JSON.parse(localStorage.getItem('mwm_submitted')||'[]'); }
+function markSubmitted(id){ const s=getSubmitted(); if(!s.includes(id))s.push(id); localStorage.setItem('mwm_submitted',JSON.stringify(s)); }
+function isSubmitted(id)  { return getSubmitted().includes(id); }
+function allBms()         { return [...((PROD?.bridesmaids||[]).filter(Boolean)), ...((DEMO?.bridesmaids||[]).filter(Boolean).filter(d=>!(PROD?.bridesmaids||[]).some(p=>p?.id===d.id)))]; }
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function goWedding() { renderWedding(); showPage('page-wedding'); }  // renderWedding uses uploadedPhotos
+function goReveal()  {
+  prerenderReveal();  // re-render so uploaded photos are reflected
+  document.getElementById('reveal-gate').style.display='';
+  document.getElementById('reveal-body').classList.remove('open');
+  document.getElementById('group-total').classList.remove('in');
+  showPage('page-reveal');
+}
+function goStyle(bmId) { renderStyleForm(bmId); showPage('page-style'); initPhotoDrop(); }
+
+// ── Screen 1: Wedding ─────────────────────────────────────────────────────────
+function renderWedding() {
+  const d = PROD||{}, t = d.theme||{};
+
+  document.getElementById('w-eyebrow').textContent = `${d.wedding||'Grace & Daniel'} · Bridal Party`;
+  document.getElementById('w-title').textContent   = d.wedding || 'Bolu & Jacob';
+  document.getElementById('w-date').textContent    = 'October 15, 2026';
+
+  // Pinterest link line
+  const pinLine = PINTEREST_URL
+    ? `<a class="pinterest-link" href="${esc(PINTEREST_URL)}" target="_blank">
+         <svg width="14" height="14" viewBox="0 0 24 24" fill="#E60023"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+         View inspo board
+       </a>`
+    : '';
+
+  document.getElementById('theme-card').innerHTML = `
+    <div class="theme-name">${esc(t.name||'Sage &amp; Gold Garden')}</div>
+    <div class="theme-desc">${esc(t.summary||t.formality||'Romantic garden ceremony in sage and gold.')}</div>
+    ${pinLine}
+    <div class="swatches">${(t.palette||[]).map(c=>`<div class="sw" title="${esc(c.name)}" style="background:${esc(c.hex)}"></div>`).join('')}</div>
+    <div class="chips">
+      <span class="chip gold">${esc(t.metal||'14k Gold Vermeil')}</span>
+      ${(t.motifs||[]).map(m=>`<span class="chip">${esc(m)}</span>`).join('')}
+    </div>`;
+
+  // Party rows
+  const prodBms = (PROD?.bridesmaids||[]).filter(Boolean);
+  const dmBms   = (DEMO?.bridesmaids||[]).filter(Boolean);
+  const display = dmBms.length ? dmBms : prodBms;
+
+  document.getElementById('party-rows').innerHTML = display.map(bm => {
+    const prod    = prodBms.find(p=>p.id===bm.id);
+    const done    = isSubmitted(bm.id);
+    const thumbHtml = done && prod
+      ? `<div class="piece-thumb">${prod.imageUrl ? `<img src="${esc(prod.imageUrl)}" alt="">` : (CAT_EMOJI[prod.category]||'💍')}</div>`
+      : '';
+    const badgeHtml = done
+      ? `<span class="badge-done">✓ Style added</span>`
+      : `<span class="badge-pending">○ Pending</span>
+         <button class="share-pill" onclick="event.stopPropagation();shareBm('${esc(bm.id)}','${esc(bm.name)}')">Share link</button>`;
+
+    const avSrc = uploadedPhotos[bm.id] || bm.photo || bm.outfit_photo || '';
+    return `
+    <div class="party-row" onclick="goStyle('${esc(bm.id)}')">
+      <img class="party-av" src="${esc(avSrc)}" alt="${esc(bm.name)}"
+           onerror="this.src='';this.style.background='#9caf88'">
+      <div class="party-info">
+        <div class="party-name">${esc(bm.name)}</div>
+        <div class="party-tags">${(bm.style_tags||[]).join(' · ')}</div>
+      </div>
+      <div class="party-right">
+        ${thumbHtml}
+        ${badgeHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Screen 2: Style form ──────────────────────────────────────────────────────
+let currentBmId = null;
+
+function renderStyleForm(bmId) {
+  currentBmId = bmId;
+  const bm  = ((PROD?.bridesmaids||[]).find(b=>b?.id===bmId))||{};
+  const dm  = ((DEMO?.bridesmaids||[]).find(b=>b?.id===bmId))||{};
+  const data = {...dm,...bm};
+
+  const hasPreload = !!(data.photo||data.outfit_photo);
+  document.getElementById('style-body').innerHTML = `
+    <div class="photo-zone" id="photo-zone" onclick="document.getElementById('photo-file-input').click()">
+      <img class="style-portrait" id="style-portrait-img"
+           src="${esc(data.photo||data.outfit_photo||'')}" alt="${esc(data.name)}"
+           onerror="this.src='';this.style.background='var(--sage-lt)'">
+      <div class="upload-hint${hasPreload?' hidden':''}" id="upload-hint">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Add your outfit photo
+      </div>
+      <input type="file" id="photo-file-input" accept="image/*" style="display:none" onchange="previewPhoto(this)">
+    </div>
+    <div class="style-name">${esc(data.name||'')}</div>
+    <div class="style-tags">${(data.style_tags||[]).join(' · ')}</div>
+    <div class="form-group" style="margin-top:16px">
+      <label class="form-label">Metals you love?</label>
+      <div class="choices" id="s-metal">
+        ${['gold','silver','either'].map(v=>`<button class="choice${data.metal_pref===v?' on':''}" onclick="pick(this,'s-metal')">${v[0].toUpperCase()+v.slice(1)}</button>`).join('')}
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">How bold do you go?</label>
+      <div class="choices" id="s-size">
+        ${['dainty','medium','statement'].map(v=>`<button class="choice${data.size_pref===v?' on':''}" onclick="pick(this,'s-size')">${v[0].toUpperCase()+v.slice(1)}</button>`).join('')}
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Your vibe in one word</label>
+      <input class="vibe-input" id="vibe-input" value="${esc(data.vibe||'')}" placeholder="e.g. romantic, bold, minimal…">
+    </div>
+    <button class="btn-sage" onclick="saveStyle()">Save my style ✓</button>`;
+}
+
+function previewPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img  = document.getElementById('style-portrait-img');
+    const hint = document.getElementById('upload-hint');
+    if (img)  { img.src = e.target.result; img.style.background = ''; }
+    if (hint) hint.classList.add('hidden');
+    if (currentBmId) uploadedPhotos[currentBmId] = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function initPhotoDrop() {
+  const zone = document.getElementById('photo-zone');
+  if (!zone) return;
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', ()=> zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const dt = new DataTransfer(); dt.items.add(file);
+      const inp = document.getElementById('photo-file-input');
+      if (inp) { inp.files = dt.files; previewPhoto(inp); }
+    }
+  });
+}
+
+function pick(btn, groupId) {
+  document.querySelectorAll(`#${groupId} .choice`).forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+function saveStyle() {
+  if (currentBmId) markSubmitted(currentBmId);
+  // Remove deep-link param so refresh goes to wedding screen
+  history.replaceState(null,'',location.pathname);
+  goWedding();
+}
+
+// ── Screen 3: Reveal ──────────────────────────────────────────────────────────
+function prerenderReveal() {
+  const bms = (PROD?.bridesmaids||[]).filter(Boolean);
+  document.getElementById('piece-cards').innerHTML = bms.map(bm => {
+    const price = bm.price!=null ? fmt(bm.price,bm.currency||'USD') : '';
+    const pieceInner = bm.imageUrl
+      ? `<img src="${esc(bm.imageUrl)}" alt="${esc(bm.title)}" loading="lazy">`
+      : (CAT_EMOJI[bm.category]||'💍');
+    const portrait = uploadedPhotos[bm.id] || bm.photo || '';
+    return `
+    <div class="piece-card">
+      <div class="card-visuals">
+        <img class="card-portrait" src="${esc(portrait)}" alt="${esc(bm.name)}"
+             onerror="this.src='';this.style.background='#9caf88'">
+        <div class="card-piece">${pieceInner}</div>
+      </div>
+      <div class="card-body">
+        <div class="card-row">
+          <span class="card-name">${esc(bm.name)}</span>
+          <span class="card-price">${price}</span>
+        </div>
+        <div class="card-title">${esc(bm.title||'')} · ${esc(bm.material||'')}</div>
+        ${bm.rationale?`<div class="card-why">"${esc(bm.rationale)}"</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  const total = PROD?.total || bms.reduce((s,b)=>s+(b.price||0),0);
+  const url   = PROD?.checkoutUrl||'';
+  document.getElementById('group-total').innerHTML = `
+    <div class="gt-label">${bms.length} unique pieces · one order</div>
+    <div class="gt-amount">${fmt(total,PROD?.currency||'USD')}</div>
+    <button class="btn-gold" onclick="orderGroup('${esc(url)}')">Order as a group 🛍️</button>
+    <button class="btn-outline" onclick="shareGroupChat()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Share to group chat
+    </button>`;
+}
+
+function startReveal() {
+  document.getElementById('reveal-gate').style.display='none';
+  document.getElementById('reveal-body').classList.add('open');
+  const cards = document.querySelectorAll('.piece-card');
+  cards.forEach((c,i)=>setTimeout(()=>c.classList.add('in'), 120+i*280));
+  setTimeout(()=>document.getElementById('group-total').classList.add('in'), 120+cards.length*280+100);
+}
+
+async function orderGroup(cachedUrl) {
+  const url = cachedUrl || PROD?.checkoutUrl;
+  if (!url) { alert('Run python generate.py first.'); return; }
+  const win = window.open(url, '_blank');  // open immediately so browser doesn't block it
+  try {
+    const r = await fetch('/api/checkout', {method:'POST'});
+    if (r.ok) {
+      const fresh = (await r.json()).checkoutUrl;
+      if (fresh && win && !win.closed) win.location = fresh;
+    }
+  } catch(e) {}
+}
+
+function shareGroupChat() {
+  const url  = window.location.origin+window.location.pathname;
+  const text = `Our pieces are ready! 💍 ${PROD?.wedding||"Bolu & Jacob"}'s bridal party just got their custom jewelry — see everyone's look: ${url}`;
+  if (navigator.share) {
+    navigator.share({title:'Our pieces ✨',text,url}).catch(()=>openWA(text));
+  } else { openWA(text); }
+}
+function openWA(text) { window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank'); }
+
+// ── Share individual link ─────────────────────────────────────────────────────
+function shareBm(bmId, bmName) {
+  const url = `${location.origin}${location.pathname}?bridesmaid=${encodeURIComponent(bmId)}`;
+  if (navigator.share) {
+    navigator.share({
+      title: `Add your style — Grace & Daniel's Bridal Party`,
+      text: `Hey ${bmName}! Add your style for the wedding jewelry 💍`,
+      url,
+    }).catch(()=>copyLink(url));
+  } else { copyLink(url); }
+}
+function shareAll() {
+  const bms = allBms();
+  const pending = bms.filter(b=>!isSubmitted(b.id));
+  if (!pending.length) { toast('All styles added! Head to Reveal ✨'); return; }
+  const url = `${location.origin}${location.pathname}?bridesmaid=${encodeURIComponent(pending[0].id)}`;
+  copyLink(url, `${pending[0].name}'s link copied!`);
+}
+function copyLink(url, msg) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(()=>toast(msg||'Link copied!'));
+  } else {
+    prompt('Copy this link:', url);
+  }
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2400);
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+boot();
+</script>
+</body>
+</html>

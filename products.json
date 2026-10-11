@@ -1,0 +1,131 @@
+{
+  "wedding": "Bolu & Jacob",
+  "bride": "Bolu",
+  "theme": {
+    "name": "Sage & Gold Garden",
+    "palette": [
+      {
+        "name": "Sage",
+        "hex": "#9CAF88"
+      },
+      {
+        "name": "Olive",
+        "hex": "#6B7A4B"
+      },
+      {
+        "name": "Champagne",
+        "hex": "#E8D9B5"
+      },
+      {
+        "name": "Gold",
+        "hex": "#C9A44C"
+      },
+      {
+        "name": "Ivory",
+        "hex": "#FAF6EE"
+      }
+    ],
+    "metal": "14k Gold Vermeil",
+    "motifs": [
+      "olive leaves",
+      "climbing vines",
+      "tiny garden blossoms"
+    ],
+    "formality": "romantic garden formal",
+    "summary": "An outdoor garden ceremony in sage and gold: olive branches, soft vines, warm gold light."
+  },
+  "bridesmaids": [
+    {
+      "id": "breanna",
+      "name": "Breanna",
+      "photo": "friends/breanna.jpeg",
+      "style_tags": [
+        "Bold",
+        "Statement",
+        "Sculptural"
+      ],
+      "rationale": "Breanna dresses to be seen. With her hair up, statement earrings frame her face. The olive leaves tie her to the group while the cascading, sculptural shape matches her boldness.",
+      "category": "Dangle Earrings",
+      "prompt": "bold sculptural drop earrings made of layered olive leaves cascading downward, substantial and eye-catching, polished high-shine finish. Made in 14k Gold Vermeil. Garden wedding bridesmaid jewelry inspired by olive leaves, climbing vines, tiny garden blossoms; romantic garden formal style. Her personal style: loves bold statement pieces and sculptural shapes, wears her hair up in a gele for formal events.",
+      "productId": "f9b3632f-e2d2-4840-bd23-dfdbf0d09a54",
+      "patternId": "cmv49b6p300k3lg1067fxpgby",
+      "title": "14k Gold Vermeil Dangle Earring",
+      "material": "14k Gold Vermeil",
+      "maker": "Stellar",
+      "imageUrl": "https://storage.googleapis.com/public-user-designs-arcade-ai-prod/product-sources/9728d7b0-8182-40ea-b65a-09fab4864542/source.png",
+      "description": "Each piece of jewelry is handcrafted by independent makers. As a result, there may be subtle variations in design, hue, and stone appearance \u2013 true hallmarks of authentic, artisanal jewelry crafted just for you.\n\n- Aesthetic: Feminine\n- Earring Length: 25 mm\n- Feels: Substantial\n- Material: 14k Gold Vermeil",
+      "price": 186.0,
+      "currency": "USD"
+    },
+    {
+      "id": "litzy",
+      "name": "Litzy",
+      "photo": "friends/litzy.jpeg",
+      "style_tags": [
+        "Minimalist",
+        "Clean lines",
+        "Modern"
+      ],
+      "rationale": "Litzy rarely wears jewelry and will never wear anything loud. A single tiny leaf stud carries the garden theme in its quietest form, and she can wear it every day after the wedding.",
+      "category": "Stud Earrings",
+      "prompt": "tiny minimalist stud earrings, each a single small olive leaf in clean simplified geometric lines, smooth polished finish. Made in 14k Gold Vermeil. Garden wedding bridesmaid jewelry inspired by olive leaves, climbing vines, tiny garden blossoms; romantic garden formal style. Her personal style: minimalist, clean lines, everyday wear, prefers tiny understated pieces.",
+      "productId": "9522450f-1ec9-46ff-9349-5dd0d00afd07",
+      "patternId": "cmv49ba9l00valm10iw1wb8b5",
+      "title": "14k Gold Vermeil Stud Earring",
+      "material": "14k Gold Vermeil",
+      "maker": "Patina",
+      "imageUrl": "https://storage.googleapis.com/public-user-designs-arcade-ai-prod/product-sources/b316dcf5-408f-4c5d-888b-4efd0de3e8e7/source.png",
+      "description": "Each piece of jewelry is handcrafted by independent makers. As a result, there may be subtle variations in design, hue, and stone appearance \u2013 true hallmarks of authentic, artisanal jewelry crafted just for you.\n\n- Aesthetic: Feminine\n- Earring Length: 6.2 mm\n- Feels: Delicate/Light\n- Material: 14k Gold Vermeil",
+      "price": 66.0,
+      "currency": "USD"
+    },
+    {
+      "id": "sarah",
+      "name": "Sarah",
+      "photo": "friends/sarah.jpeg",
+      "style_tags": [
+        "Romantic",
+        "Vintage",
+        "Ornate"
+      ],
+      "rationale": "Sarah collects vintage pieces. A filigree medallion feels like an heirloom, and the vines and blossom put the shared garden motif in her ornate, romantic style.",
+      "category": "Pendant Necklace",
+      "prompt": "vintage heirloom-style oval medallion pendant necklace with intricate filigree olive vines and a tiny blossom at the center. Made in 14k Gold Vermeil. Garden wedding bridesmaid jewelry inspired by olive leaves, climbing vines, tiny garden blossoms; romantic garden formal style. Her personal style: romantic and vintage-inspired, loves ornate filigree and heirloom-looking pieces.",
+      "productId": "e4e7c5b4-0d77-486f-84fe-65a35aff4b5a",
+      "patternId": "cmv49b95s00rtpa10knhnl1uz",
+      "title": "14k Gold Vermeil Pendant Necklace",
+      "material": "14k Gold Vermeil",
+      "maker": "Brio",
+      "imageUrl": "https://storage.googleapis.com/public-user-designs-arcade-ai-prod/product-sources/7e8f9023-6bff-41a8-b1e4-74fe2797708d/source.png",
+      "description": "Each piece of jewelry is handcrafted by independent makers. As a result, there may be subtle variations in design, hue, and stone appearance \u2013 true hallmarks of authentic, artisanal jewelry crafted just for you.\n\n- Aesthetic: Feminine\n- Feels: Delicate/Light\n- Necklace Length: 14 in.\n- Material: 14k Gold Vermeil\n- Pendant Length: 25 mm",
+      "price": 126.0,
+      "currency": "USD"
+    },
+    {
+      "id": "tinuke",
+      "name": "Tinuke",
+      "photo": "friends/tinuke.jpeg",
+      "style_tags": [
+        "Boho",
+        "Organic",
+        "Stackable"
+      ],
+      "rationale": "Tinuke stacks rings on every finger. A vine band that wraps the finger reads as part of the garden, and she can stack it with her own rings so it fits her layered, organic look.",
+      "category": "Rings",
+      "prompt": "delicate organic band ring shaped like a twisting olive vine wrapping around the finger with small leaves, hand-textured natural look. Made in 14k Gold Vermeil. Garden wedding bridesmaid jewelry inspired by olive leaves, climbing vines, tiny garden blossoms; romantic garden formal style. Her personal style: boho and nature-loving, stacks lots of delicate rings, organic textures.",
+      "productId": "7052a74b-092d-461b-9521-682a8ebf8ad2",
+      "patternId": "cmv49bc8y00rzpa10eiwvw12x",
+      "title": "14k Gold Vermeil Ring",
+      "material": "14k Gold Vermeil",
+      "maker": "Brio",
+      "imageUrl": "https://storage.googleapis.com/public-user-designs-arcade-ai-prod/product-sources/bd7ce416-fd5b-4f25-a291-69911927ee05/source.png",
+      "description": "Each piece of jewelry is handcrafted by independent makers. As a result, there may be subtle variations in design, hue, and stone appearance \u2013 true hallmarks of authentic, artisanal jewelry crafted just for you.\n\n- Aesthetic: Feminine\n- Feels: Delicate/Light\n- Material: 14k Gold Vermeil\n- Ring Shank Width: 1.9 mm",
+      "price": 78.0,
+      "currency": "USD"
+    }
+  ],
+  "total": 456.0,
+  "currency": "USD",
+  "checkoutId": "1662768021615",
+  "checkoutUrl": "https://checkout.arcade.ai/65452179567/invoices/83b42e9a6e506acc7553526b430572fc"
+}

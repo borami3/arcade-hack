@@ -1,0 +1,3 @@
+arcadepy
+python-dotenv
+anthropic

@@ -1,0 +1,118 @@
+{
+  "wedding": "Bolu & Jacob",
+  "bride": {
+    "name": "Bolu",
+    "inspiration_images": [],
+    "theme": {
+      "name": "Sage & Gold Garden",
+      "palette": [
+        {
+          "name": "Sage",
+          "hex": "#9CAF88"
+        },
+        {
+          "name": "Olive",
+          "hex": "#6B7A4B"
+        },
+        {
+          "name": "Champagne",
+          "hex": "#E8D9B5"
+        },
+        {
+          "name": "Gold",
+          "hex": "#C9A44C"
+        },
+        {
+          "name": "Ivory",
+          "hex": "#FAF6EE"
+        }
+      ],
+      "metal": "14k Gold Vermeil",
+      "motifs": [
+        "olive leaves",
+        "climbing vines",
+        "tiny garden blossoms"
+      ],
+      "formality": "romantic garden formal",
+      "summary": "An outdoor garden ceremony in sage and gold: olive branches, soft vines, warm gold light."
+    }
+  },
+  "bridesmaids": [
+    {
+      "id": "breanna",
+      "name": "Breanna",
+      "photo": "friends/breanna.jpeg",
+      "style_images": [],
+      "style_tags": [
+        "Bold",
+        "Statement",
+        "Sculptural"
+      ],
+      "style": "loves bold statement pieces and sculptural shapes, wears her hair up in a gele for formal events",
+      "category": "Dangle Earrings",
+      "piece": "bold sculptural drop earrings made of layered olive leaves cascading downward, substantial and eye-catching, polished high-shine finish",
+      "rationale": "Breanna dresses to be seen. With her hair up, statement earrings frame her face. The olive leaves tie her to the group while the cascading, sculptural shape matches her boldness.",
+      "metal_pref": "gold",
+      "size_pref": "statement",
+      "vibe": "bold",
+      "outfit_photo": "friends/breanna.jpeg"
+    },
+    {
+      "id": "litzy",
+      "name": "Litzy",
+      "photo": "friends/litzy.jpeg",
+      "style_images": [],
+      "style_tags": [
+        "Minimalist",
+        "Clean lines",
+        "Modern"
+      ],
+      "style": "minimalist, clean lines, everyday wear, prefers tiny understated pieces",
+      "category": "Stud Earrings",
+      "piece": "tiny minimalist stud earrings, each a single small olive leaf in clean simplified geometric lines, smooth polished finish",
+      "rationale": "Litzy rarely wears jewelry and will never wear anything loud. A single tiny leaf stud carries the garden theme in its quietest form, and she can wear it every day after the wedding.",
+      "metal_pref": "gold",
+      "size_pref": "dainty",
+      "vibe": "minimal",
+      "outfit_photo": "friends/litzy.jpeg"
+    },
+    {
+      "id": "sarah",
+      "name": "Sarah",
+      "photo": "friends/sarah.jpeg",
+      "style_images": [],
+      "style_tags": [
+        "Romantic",
+        "Vintage",
+        "Ornate"
+      ],
+      "style": "romantic and vintage-inspired, loves ornate filigree and heirloom-looking pieces",
+      "category": "Pendant Necklace",
+      "piece": "vintage heirloom-style oval medallion pendant necklace with intricate filigree olive vines and a tiny blossom at the center",
+      "rationale": "Sarah collects vintage pieces. A filigree medallion feels like an heirloom, and the vines and blossom put the shared garden motif in her ornate, romantic style.",
+      "metal_pref": "gold",
+      "size_pref": "medium",
+      "vibe": "romantic",
+      "outfit_photo": "friends/sarah.jpeg"
+    },
+    {
+      "id": "tinuke",
+      "name": "Tinuke",
+      "photo": "friends/tinuke.jpeg",
+      "style_images": [],
+      "style_tags": [
+        "Boho",
+        "Organic",
+        "Stackable"
+      ],
+      "style": "boho and nature-loving, stacks lots of delicate rings, organic textures",
+      "category": "Rings",
+      "piece": "delicate organic band ring shaped like a twisting olive vine wrapping around the finger with small leaves, hand-textured natural look",
+      "rationale": "Tinuke stacks rings on every finger. A vine band that wraps the finger reads as part of the garden, and she can stack it with her own rings so it fits her layered, organic look.",
+      "metal_pref": "gold",
+      "size_pref": "dainty",
+      "vibe": "organic",
+      "outfit_photo": "friends/tinuke.jpeg"
+    }
+  ]
+}
